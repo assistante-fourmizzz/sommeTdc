@@ -23,9 +23,9 @@ function actualiserSommeTdc(){
 function afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc){
 	var cible = singletonHtml('sommeTdc');
 	if (tdcGagné || tdcPerdu || bilanTdc)
-		cible.innerHTML = 'Tdc Gagné : '+entierFormaté(tdcGagné)+'cm²<br>'
-			+'Tdc Perdu : '+entierFormaté(tdcPerdu)+'cm²<br>'
-			+'Bilan : '+entierFormaté(bilanTdc)+'cm²';
+		cible.innerHTML = 'Tdc Gagné : '+entierFormaté(tdcGagné)+' cm²<br>'
+			+'Tdc Perdu : '+entierFormaté(tdcPerdu)+' cm²<br>'
+			+'Bilan : '+entierFormaté(bilanTdc)+' cm²';
 	else cible.innerHTML = '';
 }
 function html2text(htmlBrut){
