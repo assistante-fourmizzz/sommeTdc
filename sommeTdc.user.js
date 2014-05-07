@@ -1,10 +1,13 @@
 // ==UserScript==
-// @name          sommeTdc
-// @include       http://*fourmizzz.fr/*
-// @author        GammaNu
-// @version       1.1
-// @namespace     http://l-assistante.fr
-// @description   totalise les floods affichés dans la page courante.
+// @name			sommeTdc
+// @include			http://*fourmizzz.fr/*
+// @author			GammaNu
+// @version			1.2
+// @namespace		http://l-assistante.fr
+// @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
+// @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
+// @icon			https://avatars2.githubusercontent.com/u/7507655?s=140
+// @description		Totalise les floods affichés dans la page courante.
 // ==/UserScript==
 
 setInterval(actualiserSommeTdc,1000);
