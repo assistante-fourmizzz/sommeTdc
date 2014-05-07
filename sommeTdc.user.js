@@ -32,7 +32,7 @@ function afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc){
 	else cible.innerHTML = '';
 }
 function html2text(htmlBrut){
-	return htmlBrut.replace(/<[^>]+>/g,'');
+	return htmlBrut.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
 }
 function text2json(textBrut){
 	var listFlood = [];
