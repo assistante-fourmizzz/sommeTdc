@@ -2,11 +2,11 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.2
+// @version			1.3
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
-// @icon			https://avatars2.githubusercontent.com/u/7507655?s=140
+// @icon			http://l-assistante.fr/static/img/assistanteSquareI.png
 // @description		Totalise les floods affichés dans la page courante.
 // ==/UserScript==
 
@@ -25,11 +25,19 @@ function actualiserSommeTdc(){
 }
 function afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc){
 	var cible = singletonHtml('sommeTdc');
-	if (tdcGagné || tdcPerdu || bilanTdc)
-		cible.innerHTML = 'Tdc Gagné : '+entierFormaté(tdcGagné)+' cm²<br>'
-			+'Tdc Perdu : '+entierFormaté(tdcPerdu)+' cm²<br>'
-			+'Bilan : '+entierFormaté(bilanTdc)+' cm²';
-	else cible.innerHTML = '';
+	if(afficherSommeTdc.tdcGagné != tdcGagné
+		|| afficherSommeTdc.tdcPerdu != tdcPerdu
+		|| afficherSommeTdc.bilanTdc != bilanTdc
+		){
+		if (tdcGagné || tdcPerdu || bilanTdc)
+			cible.innerHTML = 'Tdc Gagné : '+entierFormaté(tdcGagné)+' cm²<br>'
+				+'Tdc Perdu : '+entierFormaté(tdcPerdu)+' cm²<br>'
+				+'Bilan : '+entierFormaté(bilanTdc)+' cm²';
+		else cible.innerHTML = '';
+	}
+	afficherSommeTdc.tdcGagné = tdcGagné;
+	afficherSommeTdc.tdcPerdu = tdcPerdu;
+	afficherSommeTdc.bilanTdc = bilanTdc;
 }
 function html2text(htmlBrut){
 	return htmlBrut.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
