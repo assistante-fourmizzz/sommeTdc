@@ -2,7 +2,7 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.4
+// @version			1.5
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
@@ -59,7 +59,7 @@ function html2text(htmlBrut){
 }
 function text2json(textBrut){
 	var listFlood = [];
-	textBrut.replace(/([^\s]+)\s* vous a pris([ 0-9]+)cm2/g,function(osef,pseudoFloodeur,tdc){
+	textBrut.replace(/([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm2/g,function(osef,pseudoFloodeur,tdc){
 		listFlood.push({
 			'perdu': true,
 			'floodeur': pseudoFloodeur,
@@ -67,7 +67,7 @@ function text2json(textBrut){
 		});
 		return '';
 	});
-	textBrut.replace(/([ 0-9]+)cm2 lors de leur dernière bataille. Ces terres appartenaient à \s*([^\s]+)\s*[.]/g,function(osef,tdc,pseudoFloodé){
+	textBrut.replace(/([ 0-9]+)cm2\s+lors\s+de\s+leur\s+dernière\s+bataille.\s+Ces\s+terres\s+appartenaient\s+à\s*([^\s]+)\s*.\s*/g,function(osef,tdc,pseudoFloodé){
 		listFlood.push({
 			'perdu': false,
 			'floodé': pseudoFloodé,
