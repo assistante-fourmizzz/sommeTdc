@@ -2,7 +2,7 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.3
+// @version			1.4
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
@@ -12,7 +12,10 @@
 
 setInterval(actualiserSommeTdc,1000);
 function actualiserSommeTdc(){
-	var floodList = text2json(html2text(document.body.innerHTML));
+	var donnéesAParser = document.body.innerHTML;
+	var listeTextArea = document.getElementsByTagName('textarea');
+	for(var clef=0; clef<listeTextArea.length;clef++) donnéesAParser += listeTextArea[clef].value;
+	var floodList = text2json(html2text(donnéesAParser));
 	var tdcGagné = 0;
 	var tdcPerdu = 0;
 
@@ -24,15 +27,27 @@ function actualiserSommeTdc(){
 	afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc);
 }
 function afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc){
-	var cible = singletonHtml('sommeTdc');
+	var cible = singletonHtml('sommeTdc',
+		{'style':'position:fixed;bottom:0;right:0;text-align:right;background:rgba(100%,100%,100%,.8);'}
+	);
+
 	if(afficherSommeTdc.tdcGagné != tdcGagné
 		|| afficherSommeTdc.tdcPerdu != tdcPerdu
 		|| afficherSommeTdc.bilanTdc != bilanTdc
 		){
-		if (tdcGagné || tdcPerdu || bilanTdc)
-			cible.innerHTML = 'Tdc Gagné : '+entierFormaté(tdcGagné)+' cm²<br>'
-				+'Tdc Perdu : '+entierFormaté(tdcPerdu)+' cm²<br>'
-				+'Bilan : '+entierFormaté(bilanTdc)+' cm²';
+		if (tdcGagné || tdcPerdu || bilanTdc){
+			cible.innerHTML = 'Tdc Gagné : <span style="color:'+couleur(tdcGagné)+'">'+entierFormaté(tdcGagné)+'</span> cm²<br>'
+				+'Tdc Perdu : <span style="color:'+couleur(-tdcPerdu)+'">'+entierFormaté(tdcPerdu)+'</span> cm²<br>'
+				+'<strong>Bilan : <span style="color:'+couleur(bilanTdc)+'">'+entierFormaté(bilanTdc,true)+'</span> cm²</strong>';
+			var textArea = document.getElementById('message');
+			if(textArea){
+				textArea.setAttribute('data-totaux',"\n\n"
+					+'Tdc Gagné : [color='+couleur(tdcGagné)+']'+entierFormaté(tdcGagné)+'[/color] cm²'+"\n"
+					+'Tdc Perdu : [color='+couleur(-tdcPerdu)+']'+entierFormaté(tdcPerdu)+'[/color] cm²'+"\n"
+					+'[b]Bilan : [color='+couleur(bilanTdc)+']'+entierFormaté(bilanTdc,true)+'[/color] cm²[/b]');
+				ajouterBoutonBilanFlood();
+			}
+		}
 		else cible.innerHTML = '';
 	}
 	afficherSommeTdc.tdcGagné = tdcGagné;
@@ -40,11 +55,11 @@ function afficherSommeTdc(tdcGagné,tdcPerdu,bilanTdc){
 	afficherSommeTdc.bilanTdc = bilanTdc;
 }
 function html2text(htmlBrut){
-	return htmlBrut.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
+	return htmlBrut.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ');
 }
 function text2json(textBrut){
 	var listFlood = [];
-	textBrut.replace(/([^\s]+) vous a pris([ 0-9]+)cm2/g,function(osef,pseudoFloodeur,tdc){
+	textBrut.replace(/([^\s]+)\s* vous a pris([ 0-9]+)cm2/g,function(osef,pseudoFloodeur,tdc){
 		listFlood.push({
 			'perdu': true,
 			'floodeur': pseudoFloodeur,
@@ -52,7 +67,7 @@ function text2json(textBrut){
 		});
 		return '';
 	});
-	textBrut.replace(/([ 0-9]+)cm2 lors de leur dernière bataille. Ces terres appartenaient à ([^\s]+)./g,function(osef,tdc,pseudoFloodé){
+	textBrut.replace(/([ 0-9]+)cm2 lors de leur dernière bataille. Ces terres appartenaient à \s*([^\s]+)\s*[.]/g,function(osef,tdc,pseudoFloodé){
 		listFlood.push({
 			'perdu': false,
 			'floodé': pseudoFloodé,
@@ -62,13 +77,18 @@ function text2json(textBrut){
 	});
 	return listFlood;
 }
-function singletonHtml(id){
+function singletonHtml(id,attributes,balise,idInsertion){
 	var singleton = document.getElementById(id);
 	if (!singleton){
-		singleton = document.createElement('div');
-		singleton.setAttribute('id','sommeTdc');
-		singleton.setAttribute('style','position:fixed;bottom:0;right:0;text-align:right;background:rgba(100%,100%,100%,.8);');
-		document.body.appendChild(singleton);
+		if(!balise) balise = 'div';
+		singleton = document.createElement(balise);
+		singleton.setAttribute('id',id);
+		for(var nomAttribut in attributes) singleton.setAttribute(nomAttribut,attributes[nomAttribut]);
+		if(idInsertion) {
+			var balisePrécédente = document.getElementById(idInsertion);
+			balisePrécédente.parentNode.insertBefore(singleton, balisePrécédente.nextSibling);
+		}
+		else document.body.appendChild(singleton);
 	}
 	return singleton;
 }
@@ -89,6 +109,20 @@ function decoupeLeNombreParSerieDe_N_Chiffre(nombre, n){
 	}
 	return tableauResultat;
 }
-function entierFormaté(int){
-	return decoupeLeNombreParSerieDe_N_Chiffre(int).join(' ');
+function entierFormaté(int, signeExplicite){
+	var nombreFormatté = decoupeLeNombreParSerieDe_N_Chiffre(int).join(' ');
+	if(signeExplicite && nombreFormatté[0]!= '-') nombreFormatté = '+'+nombreFormatté;
+	return nombreFormatté;
+}
+function couleur(nombre){
+	if(nombre>0) return '#09750c';
+	if(nombre<0) return '#c5130f';
+	if(nombre===0) return '#242424';
+}
+function ajouterBoutonBilanFlood(){
+	singletonHtml('totauxFlood',{
+		'value':'Totaux flood',
+		'type':'button',
+		'onclick':'var textArea = document.getElementById("message"); textArea.value += textArea.getAttribute("data-totaux");return false;'
+	},'input','message');
 }
