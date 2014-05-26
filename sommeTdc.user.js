@@ -2,7 +2,7 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.6
+// @version			1.6.1
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
@@ -92,7 +92,7 @@ function text2json(textBrut){
 	}
 	return listFlood;
 }
-function singletonHtml(id,attributes,balise,idInsertion){
+function singletonHtml(id,attributes,balise,idInsertion,events){
 	var singleton = document.getElementById(id);
 	if (!singleton){
 		if(!balise) balise = 'div';
@@ -104,6 +104,9 @@ function singletonHtml(id,attributes,balise,idInsertion){
 			balisePrécédente.parentNode.insertBefore(singleton, balisePrécédente.nextSibling);
 		}
 		else document.body.appendChild(singleton);
+		for(var trigger in events){
+			singleton.addEventListener(trigger,events[trigger]);
+		}
 	}
 	return singleton;
 }
@@ -140,9 +143,8 @@ function ajouterBoutonBilanFlood(){
 	singletonHtml('brFlood3',{},'br','message');
 	singletonHtml('totauxFlood',{
 		'value':'Totaux flood',
-		'type':'button',
-		'onclick':'ajouterBilanFlood();return false;'
-	},'input','message');
+		'type':'button'
+	},'input','message',{'click':ajouterBilanFlood});
 }
 function ajouterBoutonAnalyserMessage(){
 	singletonHtml('brAnalyse1',{},'br','message');
@@ -150,20 +152,20 @@ function ajouterBoutonAnalyserMessage(){
 	singletonHtml('brAnalyse3',{},'br','message');
 	singletonHtml('analyseMessage',{
 		'value':'Auto-formatter les floods',
-		'type':'button',
-		'onclick':'autoFormatterMessage();return false;'
-	},'input','message');
+		'type':'button'
+	},'input','message',{'click':autoFormatterMessage});
 }
 
 function rendreLeTextAreaFloatant(){
 	singletonHtml('clearMessage',{'style':'clear:both;'},'div','repondre_focus');
 	document.getElementById('message').setAttribute('style','width: 80%; height: 150px; float: left;');
 }
-window.ajouterBilanFlood = function(){
+ajouterBilanFlood = function(){
 	var textArea = document.getElementById("message");
 	textArea.value += textArea.getAttribute("data-totaux");
+	return false;
 };
-window.autoFormatterMessage = function(){
+autoFormatterMessage = function(){
 	var textArea = document.getElementById("message");
 	var floodList = text2json(html2text(textArea.value));
 	//var tdcGagné = 0;
@@ -183,4 +185,5 @@ window.autoFormatterMessage = function(){
 	//var bilanTdc = tdcGagné - tdcPerdu;
 
 	textArea.value = nouveauMessage;
+	return false;
 };
