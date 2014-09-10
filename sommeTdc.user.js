@@ -2,7 +2,7 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.6.1
+// @version			1.7.0
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
@@ -61,23 +61,28 @@ function html2text(htmlBrut){
 }
 function text2json(textBrut){
 	var listFlood = [];
-	// 24/05/14 00h19 Terrain de chasse volé par LoTo
-	// LoTo vous a pris 3 615 161 cm2 lors de sa dernière attaque.
-	// textBrut.replace(/([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm2/g,function(osef,pseudoFloodeur,tdc){
 
-	textBrut.replace(
+	textBrut.replace( // nouvelle formulation
+		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm²/gm,
+		function(osef,date,pseudo,tdc){return text2jsonCallback(osef,date,tdc,pseudo,true);} // attention à l'inversion dans l'ordre des paramètres entre pseudo et tdc
+	);
+	textBrut.replace( // ancienne formulation
 		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+Terrain\s+de\s+chasse\s+volé\s+par\s+[^\s]+\s+([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm2/gm,
 		function(osef,date,pseudo,tdc){return text2jsonCallback(osef,date,tdc,pseudo,true);} // attention à l'inversion dans l'ordre des paramètres entre pseudo et tdc
 	);
-	textBrut.replace(
+	textBrut.replace( // formulation plugin
 		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+capturé\s:\s+([ 0-9]+)cm2\s+par\s*([^\s]+)/g,
 		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,true);}
 	);
-	textBrut.replace(
+	textBrut.replace( // nouvelle formulation
+		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+Vos\s+fourmis\s+ont\s+conquis\s+([ 0-9]+)cm²\s+lors\s+de\s+leur\s+dernière\s+bataille.\s+Ces\s+terres\s+appartenaient\s+à\s*([^\s]+)\s*\.\s*/gm,
+		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,false);}
+	);
+	textBrut.replace( // ancienne formulation
 		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+Terrain\s+de\s+chasse\s+de\s+[^\s]+\s+capturé\s+Vos\s+fourmis\s+ont\s+conquis\s+([ 0-9]+)cm2\s+lors\s+de\s+leur\s+dernière\s+bataille.\s+Ces\s+terres\s+appartenaient\s+à\s*([^\s]+)\s*\.\s*/gm,
 		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,false);}
 	);
-	textBrut.replace(
+	textBrut.replace( // formulation plugin
 		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+capturé\s:\s+([ 0-9]+)cm2\s+à\s*([^\s]+)/g,
 		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,false);}
 	);
