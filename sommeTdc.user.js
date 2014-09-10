@@ -2,7 +2,7 @@
 // @name			sommeTdc
 // @include			http://*fourmizzz.fr/*
 // @author			GammaNu
-// @version			1.7.0
+// @version			1.7.1
 // @namespace		http://l-assistante.fr
 // @updateURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
 // @downloadURL		https://github.com/assistante-fourmizzz/sommeTdc/raw/master/sommeTdc.user.js
@@ -63,7 +63,7 @@ function text2json(textBrut){
 	var listFlood = [];
 
 	textBrut.replace( // nouvelle formulation
-		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm²/gm,
+		/([0-9]+\/[0-9]+\/[0-9]+\s+à\s+[0-9]+h[0-9]+)\s+([^\s]+)\s*vous\s+a\s+pris([ 0-9]+)cm²/gm,
 		function(osef,date,pseudo,tdc){return text2jsonCallback(osef,date,tdc,pseudo,true);} // attention à l'inversion dans l'ordre des paramètres entre pseudo et tdc
 	);
 	textBrut.replace( // ancienne formulation
@@ -75,7 +75,7 @@ function text2json(textBrut){
 		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,true);}
 	);
 	textBrut.replace( // nouvelle formulation
-		/([0-9]+\/[0-9]+\/[0-9]+\s+[0-9]+h[0-9]+)\s+Vos\s+fourmis\s+ont\s+conquis\s+([ 0-9]+)cm²\s+lors\s+de\s+leur\s+dernière\s+bataille.\s+Ces\s+terres\s+appartenaient\s+à\s*([^\s]+)\s*\.\s*/gm,
+		/([0-9]+\/[0-9]+\/[0-9]+\s+à\s+[0-9]+h[0-9]+)\s+Vos\s+fourmis\s+ont\s+conquis\s+([ 0-9]+)cm²\s+lors\s+de\s+leur\s+dernière\s+bataille.\s+Ces\s+terres\s+appartenaient\s+à\s*([^\s]+)\s*\.\s*/gm,
 		function(osef,date,tdc,pseudo){return text2jsonCallback(osef,date,tdc,pseudo,false);}
 	);
 	textBrut.replace( // ancienne formulation
